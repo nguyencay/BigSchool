@@ -49,17 +49,23 @@ namespace BigSchool.Controllers
         public ActionResult Edit(int id)
         {
             var b = context.Coursees.First(m => m.Id == id);
+            b.ListCategory = context.Categories.ToList();
             return View(b);
         }
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        //[HttpPost]
+        [Authorize]
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, FormCollection collection, Coursee objCourse)
         {
+            //objCourse.ListCategory = context.Categories.ToList();
             var b = context.Coursees.First(m => m.Id == id);
             if (b != null)
             {
                 UpdateModel(b);
                 context.SaveChanges();
-                return RedirectToAction("Index");
+                
+                return RedirectToAction("Mine");
             }
             return this.Edit(id);
         }
@@ -71,10 +77,11 @@ namespace BigSchool.Controllers
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
+            //Coursee b = context.Coursees.FirstOrDefault(x => x.Id == id);
             var b = context.Coursees.Where(x => x.Id == id).First();
             context.Coursees.Remove(b);
             context.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Mine");
         }
 
 
