@@ -77,6 +77,9 @@ namespace BigSchool.Controllers
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
+            var a = context.Attendances.Where(m => m.CourseId == id).First();
+            context.Attendances.Remove(a);
+            context.SaveChanges();
             //Coursee b = context.Coursees.FirstOrDefault(x => x.Id == id);
             var b = context.Coursees.Where(x => x.Id == id).First();
             context.Coursees.Remove(b);
