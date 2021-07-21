@@ -15,11 +15,26 @@ namespace BigSchool.Controllers
         {
             BigSchoolContext context = new BigSchoolContext();
             var upcommingCourse = context.Coursees.Where(p => p.DateTime>DateTime.Now).OrderBy(p => p.DateTime).ToList();
+            var userID = User.Identity.GetUserId();
             foreach (Coursee i in upcommingCourse)
             {
                 ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(i.LecturerId);
                 i.Name = user.Name;
+                if (userID != null)
+
+                {
+                    i.isLogin = true;
+                    Attendance find = context.Attendances.FirstOrDefault(p =>
+                    p.CourseId == i.Id && p.Attendee == userID);
+                    if (find == null)
+                        i.isShowGoing = true;
+                    Following findFollow = context.Followings.FirstOrDefault(p =>
+                    p.FollowerId == userID && p.FolloweeId == i.LecturerId);
+                    if (findFollow == null)
+                        i.isShowFollow = true;
+                }
             }
+
             return View(upcommingCourse);
         }
 
